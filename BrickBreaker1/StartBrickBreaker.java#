@@ -1,0 +1,83 @@
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.shape.*;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.scene.paint.Color;
+import javafx.scene.input.KeyEvent;
+import java.awt.Toolkit;
+import java.awt.Dimension; 
+
+
+public class StartBrickBreaker extends Application
+{
+   
+    
+    @Override
+    public void start(Stage stage)
+    {
+        Pane root = new Pane();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        final int X=screenSize.width;
+        final int Y=screenSize.height;
+        final double C=X*.15;
+        final double D=Y*.05;
+        final double A=X*.5;
+        final double B=Y*.90;
+        final double moveSpeed=.01*X;
+        final double boost=.2*X;
+        final double centerX=X/2,centerY=Y/2;
+        final double ballR = Y*.015;      // 1.  Set the size of the Scene.  Use constants!
+        Scene gameScene = new Scene(root,X ,Y);
+        stage.setTitle("BrickBreaker");
+        stage.setScene(gameScene);
+        
+        // 2. Creating paddle.  Set the size, initial placement,
+        //and color of the paddle.
+        
+        Rectangle paddle = new Rectangle(A,B,C,D);
+        paddle.setFill(Color.BLUE);
+        root.getChildren().addAll(paddle);
+        
+        //3.  Here is the event handler that responds to the left and
+         //right buttons.  It moves the paddles.  Add the code that 
+         // stops the paddle from moving off the side of the stage.
+
+        gameScene.setOnKeyPressed(new EventHandler <KeyEvent>() {
+            @Override public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case RIGHT: paddle.setX(paddle.getX() + moveSpeed); break;
+                    case LEFT:  paddle.setX(paddle.getX() - moveSpeed); break;
+
+                }
+                if(paddle.getX()<0)
+                    paddle.setX(0);
+                if(paddle.getX()>X-C)
+                    paddle.setX(X-C);
+            }
+        });
+        Circle collider =new Circle(centerX,centerY,ballR,Color.DARKSALMON);
+        //collider.relocate(500,500);
+        root.getChildren().addAll(collider);
+        
+        stage.show();
+        
+        final Timeline loop =new Timeline(new KeyFrame(Duration.millis(15),new EventHandler<ActionEvent>() {
+        @Override 
+            public void handle(final ActionEvent t) {
+                
+                collider.setLayoutX(collider.getLayoutX() +500);
+                collider.setLayoutY(collider.getLayoutY() +500);
+        
+        
+            }
+        }));
+    loop.setCycleCount(Timeline.INDEFINITE);
+    loop.play();
+}
+}
